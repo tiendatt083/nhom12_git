@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git Practice Demo - Team Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
+
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Git Lab Demo <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono">v1.0.0</span>
+          </h1>
+          <p class="text-xs text-slate-400">Dự án mẫu thực hành Branch, Merge & Conflict</p>
+        </div>
+      </div>
+      
+      <!-- Branch status badge -->
+      <div class="flex items-center gap-2 font-mono text-xs bg-slate-900 border border-slate-700/80 px-3 py-1.5 rounded-lg">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-400">Current Branch:</span>
+        <span class="text-emerald-400 font-semibold" id="branch-indicator">main</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-10">
+    <section class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40 p-6 md:p-8 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="max-w-3xl space-y-3">
+        <span class="text-xs uppercase tracking-widest text-indigo-400 font-semibold bg-indigo-950/60 border border-indigo-800/60 px-3 py-1 rounded-md inline-block">Mục tiêu bài tập nhóm</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-white">Xây dựng ứng dụng Team Hub bằng Git Flow</h2>
+        <p class="text-sm md:text-base text-slate-300 leading-relaxed">
+          Mỗi thành viên tạo nhánh riêng (<code class="text-pink-400 font-mono">dev-[tên]</code>), thêm thẻ cá nhân của mình vào mảng <code class="text-amber-300 font-mono">members</code> trong file này, sau đó pull request và giải quyết xung đột khi merge vào <code class="text-emerald-400 font-mono">main</code>.
+        </p>
+      </div>
+
+      <!-- Quick Git Cheatsheet -->
+      <div class="mt-6 pt-6 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-xs">
+        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <p class="text-slate-400 font-sans mb-1 font-semibold text-[11px] uppercase">1. Tạo nhánh riêng</p>
+          <code class="text-indigo-300">git checkout -b dev-nam</code>
+        </div>
+        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <p class="text-slate-400 font-sans mb-1 font-semibold text-[11px] uppercase">2. Commit & Push</p>
+          <code class="text-indigo-300">git commit -am "feat: add Nam"</code>
+        </div>
+        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <p class="text-slate-400 font-sans mb-1 font-semibold text-[11px] uppercase">3. Kéo code giải quyết Conflict</p>
+          <code class="text-indigo-300">git pull origin main</code>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>👥 Danh Sách Thành Viên</span>
+            <span class="text-xs font-mono font-normal bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full" id="member-count">0 thành viên</span>
+          </h3>
+          <p class="text-xs text-slate-400">Mỗi bạn hãy mở code, thêm thông tin của mình vào danh sách dưới đây!</p>
+        </div>
+
+        <button onclick="openAddModal()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/30">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Thử thêm nhanh
+        </button>
+      </div>
+
+      <div id="members-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Cards will be dynamically injected here -->
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Shared Counter Card -->
+      <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-bold text-base text-white">🚀 Team Commit Counter</h4>
+            <span class="text-xs font-mono text-purple-400 bg-purple-950/60 border border-purple-800/50 px-2 py-0.5 rounded">Feature A</span>
+          </div>
+          <p class="text-xs text-slate-400">Một widget bấm đếm commit giả lập để thử nghiệm sửa code logic JavaScript.</p>
+        </div>
+
+        <div class="bg-slate-900/90 p-6 rounded-xl border border-slate-800 text-center my-2">
+          <span class="text-xs font-mono text-slate-400 block mb-1">TỔNG COMMITS CẢ NHÓM</span>
+          <span id="counter-val" class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400 font-mono">14</span>
+        </div>
+
+        <div class="flex gap-2">
+          <button onclick="updateCounter(-1)" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition">
+            - Giảm
+          </button>
+          <button onclick="updateCounter(1)" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition shadow-md shadow-indigo-600/30">
+            + Tăng commit
+          </button>
+          <button onclick="resetCounter()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-950/50 hover:text-rose-400 hover:border-rose-800 text-slate-400 font-semibold text-xs border border-slate-700 transition">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Git Conflict Simulator Note -->
+      <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-4">
+        <div class="flex items-center justify-between mb-1">
+          <h4 class="font-bold text-base text-white">⚡ Hướng dẫn tạo Conflict có chủ đích</h4>
+          <span class="text-xs font-mono text-rose-400 bg-rose-950/60 border border-rose-800/50 px-2 py-0.5 rounded">Yêu cầu chấm điểm</span>
+        </div>
+        <p class="text-xs text-slate-400">Để hoàn thành bài tập, hãy cố tình tạo xung đột theo kịch bản này:</p>
+
+        <div class="space-y-2.5 font-mono text-[11px]">
+          <div class="p-3 bg-slate-900 rounded-xl border-l-4 border-amber-400 text-slate-300">
+            <span class="text-amber-400 font-bold block mb-1 font-sans">BƯỚC 1: SỬA CÙNG MỘT DÒNG</span>
+            Mở file này, tìm biến <code class="text-pink-300">GROUP_NAME</code> ở phần Script bên dưới. Leader đổi thành "Nhóm Vô Địch", Member đổi thành "Nhóm Chiến Thần".
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border-l-4 border-cyan-400 text-slate-300">
+            <span class="text-cyan-400 font-bold block mb-1 font-sans">BƯỚC 2: LEADER PUSH TRƯỚC</span>
+            Leader commit và <code class="text-emerald-300">git push origin main</code> lên GitHub thành công.
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border-l-4 border-rose-400 text-slate-300">
+            <span class="text-rose-400 font-bold block mb-1 font-sans">BƯỚC 3: MEMBER BỊ REJECT & GIẢI QUYẾT</span>
+            Member commit local rồi chạy <code class="text-indigo-300">git pull origin main</code>. Git sẽ báo CONFLICT. Mở VS Code chọn Accept Both/Incoming -> Commit và Push.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="border-t border-slate-800/80 pt-6 pb-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <p>Nhóm thực hành: <strong class="text-slate-300 font-mono" id="group-name-label">Team 01 - Cloud Nine</strong></p>
+      <div class="flex items-center gap-4">
+        <span>Repo: <code class="text-indigo-400">git-team-practice</code></span>
+        <span>•</span>
+        <span>Local / Remote sync verified</span>
+      </div>
+    </footer>
+  </main>
+
+  <div id="modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-white text-base">Thêm thành viên demo</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <p class="text-xs text-slate-400">Thay vì dùng form này trên web, mục tiêu là bạn hãy <strong>sửa trực tiếp trong mã nguồn file index.html</strong> rồi commit qua Git!</p>
+      
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 mb-1">Họ và tên</label>
+          <input id="input-name" type="text" placeholder="vd: Trần Văn Nam" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-slate-300 mb-1">Vai trò trong nhóm</label>
+          <input id="input-role" type="text" placeholder="vd: Frontend / Backend / Tester" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-slate-300 mb-1">Tên nhánh (Branch name)</label>
+          <input id="input-branch" type="text" placeholder="vd: dev-nam" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-500 font-mono">
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeModal()" class="flex-1 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs">Hủy</button>
+        <button onclick="submitNewMember()" class="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-600/30">Thêm tạm vào web</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+     * CHỖ ĐỂ TẠO CONFLICT (DÒNG 190):
+     * Cả Leader và Member hãy cùng sửa tên biến GROUP_NAME dưới đây sang 2 tên khác nhau!
+     * ========================================================================= */
+    const GROUP_NAME = "Team 01 - Git Avengers";
+
+    /* =========================================================================
+     * DANH SÁCH THÀNH VIÊN (MỖI BẠN TỰ THÊM 1 OBJECT CỦA MÌNH VÀO ĐÂY QUA BRANCH RIÊNG)
+     * ========================================================================= */
+    let members = [
+      {
+        name: "Nguyễn Văn An",
+        role: "Team Leader / Project Setup",
+        branch: "main",
+        avatar: "https://placehold.co/100x100/6366f1/ffffff?text=An",
+        status: "Đã merge vào main",
+        isLeader: true
+      },
+      {
+        name: "Trần Thị Bình",
+        role: "Frontend Developer",
+        branch: "dev-binh",
+        avatar: "https://placehold.co/100x100/ec4899/ffffff?text=Binh",
+        status: "Đang phát triển nhánh cá nhân",
+        isLeader: false
+      },
+      {
+        name: "Lê Hoàng Nam",
+        role: "Backend & Database",
+        branch: "dev-nam",
+        avatar: "https://placehold.co/100x100/10b981/ffffff?text=Nam",
+        status: "Đang tạo xung đột để test",
+        isLeader: false
+      }
+    ];
+
+    let commitCount = 14;
+
+    function renderMembers() {
+      const grid = document.getElementById("members-grid");
+      const countLabel = document.getElementById("member-count");
+      grid.innerHTML = "";
+      countLabel.textContent = `${members.length} thành viên`;
+
+      members.forEach((m) => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-950 p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between space-y-4 shadow-sm relative overflow-hidden group";
+        
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <img src="${m.avatar}" alt="${m.name}" class="w-12 h-12 rounded-xl object-cover ring-2 ring-slate-800" onerror="this.src='https://placehold.co/100x100/334155/ffffff?text=Dev'"/>
+              <div>
+                <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
+                  ${m.name}
+                  ${m.isLeader ? '<span class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded font-mono">Leader</span>' : ''}
+                </h4>
+                <p class="text-xs text-slate-400">${m.role}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 pt-3 border-t border-slate-900 font-mono text-[11px]">
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Nhánh:</span>
+              <span class="text-indigo-400 font-semibold bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-900/50">${m.branch}</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Trạng thái:</span>
+              <span class="text-slate-300">${m.status}</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* Counter functions */
+    function updateCounter(amount) {
+      commitCount += amount;
+      if (commitCount < 0) commitCount = 0;
+      document.getElementById("counter-val").textContent = commitCount;
+    }
+
+    function resetCounter() {
+      commitCount = 0;
+      document.getElementById("counter-val").textContent = commitCount;
+    }
+
+    /* Modal handler for live testing */
+    function openAddModal() {
+      const modal = document.getElementById("modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function submitNewMember() {
+      const name = document.getElementById("input-name").value.trim();
+      const role = document.getElementById("input-role").value.trim() || "Thành viên";
+      const branch = document.getElementById("input-branch").value.trim() || "dev-branch";
+
+      if (!name) {
+        return;
+      }
+
+      members.push({
+        name: name,
+        role: role,
+        branch: branch,
+        avatar: `https://placehold.co/100x100/6366f1/ffffff?text=${encodeURIComponent(name.charAt(0))}`,
+        status: "Đã thêm qua modal demo",
+        isLeader: false
+      });
+
+      renderMembers();
+      closeModal();
+      document.getElementById("input-name").value = "";
+      document.getElementById("input-role").value = "";
+      document.getElementById("input-branch").value = "";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("group-name-label").textContent = GROUP_NAME;
+      renderMembers();
+    });
+  </script>
+</body>
+</html>
